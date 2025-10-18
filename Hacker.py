@@ -6,6 +6,7 @@ ID: 110480857
 Username: Brocy076
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
+from Rig import Rig
 
 
 class Hacker:
@@ -32,12 +33,10 @@ class Hacker:
         """
         if "CryptoToken" in self.__inventory:
             self.__inventory.remove("CryptoToken")
-            if rig is None:
-                rig = "basic_rig"
-            self.__rig = rig
+            self.__rig = rig if rig else Rig()
             print(f"{self.__name}, your rig is activated and ready for use.")
         else:
-            print(f"{self.__name} doesn’t have enough CryptoTokens to buy a rig!")
+            print(f"{self.__name} doesn’t have enough CryptoTokens to buy a rig.")
 
     def __str__(self):
         """Return a string representation of the Hacker."""
