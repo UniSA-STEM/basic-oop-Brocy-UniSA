@@ -1,8 +1,8 @@
 """
 File: main.py
 Description: <A brief description of this Python module.>
-Author: <full name>
-ID: <student_id>
-Username: <username>
+Author: Corey Brooke
+ID: 110480857
+Username: Brocy076
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
