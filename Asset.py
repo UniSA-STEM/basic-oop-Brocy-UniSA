@@ -6,22 +6,29 @@ ID: 110480857
 Username: Brocy076
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
-from Hacker import Hacker
-from Rig import Rig
 
-class Asset():
-    def __init__(self, name, description):
-        self.name = name
-        self.description = description
-        self.encrypted = False
 
-    def transfer(self):
-        """Changes the inventory it is stored in
+class Asset:
+    def __init__(self, name: str, description: str):
+        self.__name = name
+        self.__description = description
+        self.__encrypted = False
 
-        something like if its in one move to other, but i will need a class to check what one it is in"""
-        pass
+    @property
+    def name(self):
+        return self.__name
 
+    @property
+    def encrypted(self):
+        return self.__encrypted
+
+    def encrypt(self):
+        self.__encrypted = True
+
+    def decrypt(self):
+        self.__encrypted = False
 
     def __str__(self):
-        """Return a string representation of the Asset."""
-        pass
+        if self.__encrypted:
+            return f"{self.__name}: {self.__description} [Encrypted]"
+        return f"{self.__name}: {self.__description}"
