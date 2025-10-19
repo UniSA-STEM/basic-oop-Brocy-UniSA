@@ -10,12 +10,13 @@ from Hacker import Hacker
 
 
 class Rig:
-    def __init__(self, name: str = None):
+    def __init__(self, name: str = None, owner = None):
         self.__name = name if name is not None else "Basic Rig"
         self.__damage = 0
         self.__broken = False
         self.__rig_storage = ["DataSpike", "DataSpike", "RemovableDrive"]
         self.__upgrade_level = 0
+        self.__owner = owner
 
     @property
     def storage(self):
@@ -40,9 +41,19 @@ class Rig:
         upgrades increase battle damage, storage ammount and damage mitigation"""
         self.__upgrade_level += 1
 
-    def damage_taken(self):
-        """Each hit increases damage by 1. If damage reaches 2 (for a level 0 rig), the rig becomes broken"""
-        pass
+    def take_hit(self):
+        if self.__broken:
+            print(f"{self.__name} is already broken.")
+            return
+
+        threshold = 2 + self.__upgrade_level
+        self.__damage += 1
+
+        if self.__damage >= threshold:
+            self.__broken = True
+            print(f"{self.__owner}'s Rig \"{self.__name}\" has broken under attack!")
+        else:
+            print(f"{self.__name} took damage ({self.__damage}/{threshold}).")
 
     def generate_assets(self):
         """randomly make 1 asset

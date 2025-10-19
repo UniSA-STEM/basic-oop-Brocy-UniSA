@@ -31,7 +31,7 @@ class Hacker:
 
         Searches the inventory for the first CryptoToken. If found, it is removed
         and a new rig is acquired (or the provided one is activated)."""
-    # Finds the first CryptoToken in the inventory list or returns None
+        # Finds the first CryptoToken in the inventory list or returns None
         token = next((asset for asset in self.__inventory if asset.name == "CryptoToken"), None)
         if not token:
             print(f"{self.__name} doesn’t have enough CryptoTokens to buy a rig.")
@@ -39,7 +39,7 @@ class Hacker:
 
         # Removes the token from the list and creates the Rig
         self.__inventory.remove(token)
-        self.__rig = rig if rig else Rig()
+        self.__rig = rig if rig else Rig(owner=self.__name)
         print(f"{self.__name}, your rig is activated and ready for use.")
 
     def get_trace_level(self):
@@ -57,23 +57,17 @@ class Hacker:
             print("No rig available to launch attack.")
             return
         if self.__trace_level >= self.__trace_limit:
-            print(f"{self.__name} is exposed and cannot attack until trace is reduced!")
+            print(f"{self.__name} is exposed and cannot attack until trace level is reduced!")
             return
 
         spike = next((asset for asset in self.__rig.storage if asset.name == "DataSpike"), None)
         if not spike:
-            print("No DataSpike available to launch attack.")
+            print("No DataSpike available in storage to launch attack.")
             return
 
         self.__rig.storage.remove(spike)
-        target.take_hit()
+        target_rig.take_hit()
         self.__trace_level += 1
-
-    def encrypt_assets(self):
-        """uses Security Chip item to encrypt assets.
-
-        i think ill just make this a function in asset class"""
-        pass
 
     def decrypt_assets(self):
         """uses Security Chip item to decrypt assets."""
