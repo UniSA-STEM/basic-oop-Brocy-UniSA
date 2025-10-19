@@ -70,17 +70,13 @@ class Rig:
         else:
             print(f"{self.__name} took damage ({self.__damage}/{threshold}).")
 
-    def generate_assets(self):
-        """randomly make 1 asset
-
-        probably use import random, and likely do this in the asset class"""
-        pass
-
-    def rig_info(self):
-        """A method should return the rig’s condition based on damage and upgrade level. For example,
-        “Pristine (Level 2)” or “Broken (Level 0)”."""
-        pass
+    def condition(self):
+        if self.__broken:
+            return f"Broken (Level {self.__upgrade_level})"
+        elif self.__damage == 0:
+            return f"Pristine (Level {self.__upgrade_level})"
+        return f"Damaged (Level {self.__upgrade_level})"
 
     def __str__(self):
-        """Return a string representation of the Rig."""
-        pass
+        stored_assets = ", ".join(asset.name for asset in self.__rig_storage) or "Empty"
+        return f"Rig: {self.__name} | {self.condition()} | Assets: {stored_assets}"
