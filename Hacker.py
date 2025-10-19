@@ -20,6 +20,9 @@ class Hacker:
     def __init__(self, name: str):
         """Initialize the hacker with a name, one CryptoToken, and no rig."""
         self.__name = name
+        self.__trace_level = 0
+        self.__trace_limit = 5
+        self.__detected = False
         self.__inventory = ["CryptoToken"]  # TODO: Make the inventory better. (this is just a placeholder)
         self.__rig = None
 
@@ -37,6 +40,15 @@ class Hacker:
             print(f"{self.__name}, your rig is activated and ready for use.")
         else:
             print(f"{self.__name} doesn’t have enough CryptoTokens to buy a rig.")
+
+    def get_trace_level(self):
+        return self.__trace_level
+
+    def increase_trace(self, amount: int):
+        self.__trace_level += amount
+        if self.__trace_level > self.__trace_limit:
+            self.__detected = True
+            print(f"{self.__name} has been exposed!")
 
     def __str__(self):
         """Return a string representation of the Hacker."""
