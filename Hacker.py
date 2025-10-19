@@ -62,7 +62,7 @@ class Hacker:
 
         spike = next((asset for asset in self.__rig.storage if asset.name == "DataSpike"), None)
         if not spike:
-            print("No DataSpike available in storage to launch attack.")
+            print("There are no DataSpikes available in storage to launch attack.")
             return
 
         self.__rig.storage.remove(spike)
@@ -72,7 +72,7 @@ class Hacker:
     def encrypt_asset(self, asset: Asset):
         chip = next((asset for asset in self.__inventory if asset.name == "SecurityChip"), None)
         if not chip:
-            print("No SecurityChips in inventory for encryption.")
+            print("There are no SecurityChips in inventory for encryption.")
             return
         if asset.encrypted:
             print(f"{asset.name} has already been encrypted.")
@@ -84,7 +84,7 @@ class Hacker:
     def decrypt_asset(self, asset: Asset):
         chip = next((asset for asset in self.__inventory if asset.name == "SecurityChip"), None)
         if not chip:
-            print("No SecurityChips in inventory for decryption.")
+            print("There are no SecurityChips in inventory for decryption.")
             return
         if not asset.encrypted:
             print(f"{asset.name} is not encrypted.")
@@ -93,11 +93,11 @@ class Hacker:
         asset.decrypt()
         print(f"{asset.name} decrypted.")
 
-    def upgrade_rig(self, rig: Rig):
-        """uses hardware patch to upgrade rig, upgrade improves storage size and reduces damage taken in battles
-
-        ill use the rig class for this"""
-        pass
+    def upgrade_rig(self):
+        if not self.__rig:
+            print(f"{self.__name} has no rig to upgrade.")
+            return
+        self.__rig.upgrade(self.__inventory)
 
     def get_inventory(self):
         """I will need to work out the best way to do all the inventory functions"""

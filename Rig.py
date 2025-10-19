@@ -35,11 +35,15 @@ class Rig:
             self.__broken = False
             # TODO Remove DATASPIKE ITEM
 
-    def upgrade(self):
-        """Increses the rigs upgrade level at the cost of a hardware patch
+    def upgrade(self, hacker_inventory: list):
+        patch = next((asset for asset in hacker_inventory if asset.name == "HardwarePatch"), None)
+        if not patch:
+            print("There are no HardwarePatches available to upgrade rig.")
+            return
 
-        upgrades increase battle damage, storage ammount and damage mitigation"""
+        hacker_inventory.remove(patch)
         self.__upgrade_level += 1
+        print(f"{self.__name} had upgraded their rig \"{self.__name}\" to Level {self.__upgrade_level}!")
 
     def take_hit(self):
         if self.__broken:
