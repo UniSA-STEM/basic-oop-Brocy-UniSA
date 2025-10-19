@@ -69,9 +69,29 @@ class Hacker:
         target_rig.take_hit()
         self.__trace_level += 1
 
-    def decrypt_assets(self):
-        """uses Security Chip item to decrypt assets."""
-        pass
+    def encrypt_asset(self, asset: Asset):
+        chip = next((asset for asset in self.__inventory if asset.name == "SecurityChip"), None)
+        if not chip:
+            print("No SecurityChips in inventory for encryption.")
+            return
+        if asset.encrypted:
+            print(f"{asset.name} has already been encrypted.")
+            return
+
+        asset.encrypt()
+        print(f"{asset.name} encrypted.")
+
+    def decrypt_asset(self, asset: Asset):
+        chip = next((asset for asset in self.__inventory if asset.name == "SecurityChip"), None)
+        if not chip:
+            print("No SecurityChips in inventory for decryption.")
+            return
+        if not asset.encrypted:
+            print(f"{asset.name} is not encrypted.")
+            return
+
+        asset.decrypt()
+        print(f"{asset.name} decrypted.")
 
     def upgrade_rig(self, rig: Rig):
         """uses hardware patch to upgrade rig, upgrade improves storage size and reduces damage taken in battles
