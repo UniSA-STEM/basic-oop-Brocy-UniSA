@@ -6,21 +6,22 @@ ID: 110480857
 Username: Brocy076
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
-from Hacker import Hacker
+import random
+from Asset import *
 
 
 class Rig:
-    def __init__(self, name: str = None, owner = None):
+    def __init__(self, name: str = None, owner=None):
         self.__name = name if name is not None else "Basic Rig"
         self.__damage = 0
         self.__broken = False
-        self.__rig_storage = ["DataSpike", "DataSpike", "RemovableDrive"]
+        self.__rig_storage = [DataSpike(), DataSpike(), RemovableDrive()]
         self.__upgrade_level = 0
         self.__owner = owner
 
     @property
     def storage(self):
-        return self.__storage
+        return self.__rig_storage
 
     @property
     def name(self):
@@ -44,6 +45,12 @@ class Rig:
         hacker_inventory.remove(patch)
         self.__upgrade_level += 1
         print(f"{self.__name} had upgraded their rig \"{self.__name}\" to Level {self.__upgrade_level}!")
+
+    def generate_asset(self):
+        asset_classes = [CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch]
+        new_asset = random.choice(asset_classes)()
+        self.__rig_storage.append(new_asset)
+        print(f"Asset: {new_asset.name}, has been generated.")
 
     def take_hit(self):
         if self.__broken:
