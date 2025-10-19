@@ -32,3 +32,28 @@ class Asset:
         if self.__encrypted:
             return f"{self.__name}: {self.__description} [Encrypted]"
         return f"{self.__name}: {self.__description}"
+
+
+class CryptoToken(Asset):
+    def __init__(self):
+        super().__init__("CryptoToken", "Used to acquire or repair rigs.")
+
+
+class DataSpike(Asset):
+    def __init__(self):
+        super().__init__("DataSpike", "Used in data battles to damage rigs.")
+
+
+class RemovableDrive(Asset):
+    def __init__(self):
+        super().__init__("RemovableDrive", "Used to extract unsecured assets from broken rigs.")
+
+
+class SecurityChip(Asset):
+    def __init__(self):
+        super().__init__("SecurityChip", "Used to encrypt or decrypt assets.")
+
+
+class HardwarePatch(Asset):
+    def __init__(self):
+        super().__init__("HardwarePatch", "Used to upgrade rigs for better performance.")
