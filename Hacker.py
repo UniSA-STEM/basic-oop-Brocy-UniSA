@@ -50,6 +50,34 @@ class Hacker:
             self.__detected = True
             print(f"{self.__name} has been exposed!")
 
+    def launch_data_spike(self, target_rig: Rig):
+        """Uses data spike item to do damage to target rig"""
+        pass
+
+    def encrypt_assets(self):
+        """uses Security Chip item to encrypt assets.
+
+        i think ill just make this a function in asset class"""
+        pass
+
+    def decrypt_assets(self):
+        """uses Security Chip item to decrypt assets."""
+        pass
+
+    def upgrade_rig(self, rig: Rig):
+        """uses hardware patch to upgrade rig, upgrade improves storage size and reduces damage taken in battles
+
+        ill use the rig class for this"""
+        pass
+
+    def get_inventory(self):
+        """I will need to work out the best way to do all the inventory functions"""
+        return self.__inventory
+
+    def transfer_inventory(self):
+        """Prone to change likely done with assest class"""
+        pass
+
     def __str__(self):
         """Return a string representation of the Hacker."""
         rig_status = self.__rig if self.__rig else "No Rig"
