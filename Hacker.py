@@ -75,6 +75,7 @@ class Hacker:
             print(f"{asset.name} has already been encrypted.")
             return
 
+        self.__inventory.remove(chip)
         asset.encrypt()
         print(f"{asset.name} encrypted.")
 
@@ -87,6 +88,7 @@ class Hacker:
             print(f"{asset.name} is not encrypted.")
             return
 
+        self.__inventory.remove(chip)
         asset.decrypt()
         print(f"{asset.name} decrypted.")
 
