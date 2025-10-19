@@ -17,6 +17,14 @@ class Rig:
         self.__rig_storage = ["DataSpike", "DataSpike", "RemovableDrive"]
         self.__upgrade_level = 0
 
+    @property
+    def storage(self):
+        return self.__storage
+
+    @property
+    def name(self):
+        return self.__name
+
     def repair(self):
         """uses Crypto Token to repair the Rig"""
         if self.__damage == 0:
@@ -40,11 +48,6 @@ class Rig:
         """randomly make 1 asset
 
         probably use import random, and likely do this in the asset class"""
-        pass
-
-    def transfer_storage(self):
-        """can transfer items to and from the hacker’s inventory. If an asset is encrypted,
-        it cannot be transferred until decrypted"""
         pass
 
     def rig_info(self):

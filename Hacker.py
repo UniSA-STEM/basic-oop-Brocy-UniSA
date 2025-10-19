@@ -52,8 +52,22 @@ class Hacker:
             print(f"{self.__name} has been exposed!")
 
     def launch_data_spike(self, target_rig: Rig):
-        """Uses data spike item to do damage to target rig"""
-        pass
+        """Attack another rig using DataSpike from hackers own rig's storage."""
+        if not self.__rig:
+            print("No rig available to launch attack.")
+            return
+        if self.__trace_level >= self.__trace_limit:
+            print(f"{self.__name} is exposed and cannot attack until trace is reduced!")
+            return
+
+        spike = next((asset for asset in self.__rig.storage if asset.name == "DataSpike"), None)
+        if not spike:
+            print("No DataSpike available to launch attack.")
+            return
+
+        self.__rig.storage.remove(spike)
+        target.take_hit()
+        self.__trace_level += 1
 
     def encrypt_assets(self):
         """uses Security Chip item to encrypt assets.
