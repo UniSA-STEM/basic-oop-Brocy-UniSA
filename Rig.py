@@ -6,7 +6,7 @@ ID: 110480857
 Username: Brocy076
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
-import random
+from random import choice
 from Asset import *
 
 
@@ -27,19 +27,6 @@ class Rig:
     def name(self):
         return self.__name
 
-    def repair(self, hacker_inventory: list):
-        token = next((asset for asset in hacker_inventory if asset.name == "CryptoToken"), None)
-        if not token:
-            print(f"{self.__owner} doesn’t have enough CryptoTokens to repair {self.__name}.")
-            return
-        if self.__damage == 0:
-            print(f"{self.__name} doesn't need repairs.")
-            return
-        hacker_inventory.remove(token)
-        self.__damage = 0
-        self.__broken = False
-        print(f"{self.__owner} has repaired \"{self.__name}\".")
-
     def upgrade(self, hacker_inventory: list):
         patch = next((asset for asset in hacker_inventory if asset.name == "HardwarePatch"), None)
         if not patch:
@@ -52,7 +39,7 @@ class Rig:
 
     def generate_asset(self):
         asset_classes = [CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch]
-        new_asset = random.choice(asset_classes)()
+        new_asset = choice(asset_classes)()
         self.__rig_storage.append(new_asset)
         print(f"Asset: {new_asset.name}, has been generated.")
 
@@ -69,6 +56,19 @@ class Rig:
             print(f"{self.__owner}'s Rig \"{self.__name}\" has broken under attack!")
         else:
             print(f"{self.__name} took damage ({self.__damage}/{threshold}).")
+
+    def repair(self, hacker_inventory: list):
+        token = next((asset for asset in hacker_inventory if asset.name == "CryptoToken"), None)
+        if not token:
+            print(f"{self.__owner} doesn’t have enough CryptoTokens to repair {self.__name}.")
+            return
+        if self.__damage == 0:
+            print(f"{self.__name} doesn't need repairs.")
+            return
+        hacker_inventory.remove(token)
+        self.__damage = 0
+        self.__broken = False
+        print(f"{self.__owner} has repaired \"{self.__name}\".")
 
     def condition(self):
         if self.__broken:

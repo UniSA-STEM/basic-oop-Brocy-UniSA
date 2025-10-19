@@ -42,14 +42,11 @@ class Hacker:
         self.__rig = rig if rig else Rig(owner=self.__name)
         print(f"{self.__name}, your rig is activated and ready for use.")
 
-    def get_trace_level(self):
-        return self.__trace_level
-
-    def increase_trace(self, amount: int):
-        self.__trace_level += amount
-        if self.__trace_level > self.__trace_limit:
-            self.__detected = True
-            print(f"{self.__name} has been exposed!")
+    def upgrade_rig(self):
+        if not self.__rig:
+            print(f"{self.__name} has no rig to upgrade.")
+            return
+        self.__rig.upgrade(self.__inventory)
 
     def launch_data_spike(self, target_rig: Rig):
         """Attack another rig using DataSpike from hackers own rig's storage."""
@@ -92,29 +89,6 @@ class Hacker:
 
         asset.decrypt()
         print(f"{asset.name} decrypted.")
-
-    def upgrade_rig(self):
-        if not self.__rig:
-            print(f"{self.__name} has no rig to upgrade.")
-            return
-        self.__rig.upgrade(self.__inventory)
-
-    def get_inventory(self):
-        """I will need to work out the best way to do all the inventory functions"""
-        return self.__inventory
-
-    def remove_asset(self, asset):
-        if asset in self.__inventory:
-            self.__inventory.remove(asset)
-
-    def transfer_asset(self, asset, destination):
-        """Transfer an asset from this hacker to another rig or hacker."""
-        if asset in self.__inventory:
-            self.remove_asset(asset)
-            destination.add_asset(asset)
-            print(f"{asset} transferred from {self.__name} to {destination}.")
-        else:
-            print(f"{asset} not found in {self.__name}'s inventory.")
 
     def __str__(self):
         """Return a string representation of the Hacker."""
