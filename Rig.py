@@ -27,14 +27,18 @@ class Rig:
     def name(self):
         return self.__name
 
-    def repair(self):
-        """uses Crypto Token to repair the Rig"""
+    def repair(self, hacker_inventory: list):
+        token = next((asset for asset in hacker_inventory if asset.name == "CryptoToken"), None)
+        if not token:
+            print(f"{self.__owner} doesn’t have enough CryptoTokens to repair {self.__name}.")
+            return
         if self.__damage == 0:
-            print("No repair is needed for this Rig")
-        else:
-            self.__damage = 0
-            self.__broken = False
-            # TODO Remove DATASPIKE ITEM
+            print(f"{self.__name} doesn't need repairs.")
+            return
+        hacker_inventory.remove(token)
+        self.__damage = 0
+        self.__broken = False
+        print(f"{self.__owner} has repaired \"{self.__name}\".")
 
     def upgrade(self, hacker_inventory: list):
         patch = next((asset for asset in hacker_inventory if asset.name == "HardwarePatch"), None)
