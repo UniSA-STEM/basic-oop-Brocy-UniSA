@@ -77,6 +77,9 @@ class Rig:
             return f"Pristine (Level {self.__upgrade_level})"
         return f"Damaged (Level {self.__upgrade_level})"
 
+    def is_broken(self):
+        return self.__broken
+
     def __str__(self):
         stored_assets = ", ".join(asset.name for asset in self.__rig_storage) or "Empty"
         return f"Rig: {self.__name} | {self.condition()} | Assets: {stored_assets}"

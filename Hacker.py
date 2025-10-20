@@ -48,24 +48,6 @@ class Hacker:
             return
         self.__rig.upgrade(self.__inventory)
 
-    def launch_data_spike(self, target_rig: Rig):
-        """Attack another rig using DataSpike from hackers own rig's storage."""
-        if not self.__rig:
-            print("No rig available to launch attack.")
-            return
-        if self.__trace_level >= self.__trace_limit:
-            print(f"{self.__name} is exposed and cannot attack until trace level is reduced!")
-            return
-
-        spike = next((asset for asset in self.__rig.storage if asset.name == "DataSpike"), None)
-        if not spike:
-            print("There are no DataSpikes available in storage to launch attack.")
-            return
-
-        self.__rig.storage.remove(spike)
-        target_rig.take_hit()
-        self.__trace_level += 1
-
     def encrypt_asset(self, asset: Asset):
         chip = next((asset for asset in self.__inventory if asset.name == "SecurityChip"), None)
         if not chip:
@@ -96,3 +78,37 @@ class Hacker:
         """Return a string representation of the Hacker."""
         rig_status = self.__rig if self.__rig else "No Rig"
         return f"Hacker: {self.__name}\nInventory: {self.__inventory}\nRig: {rig_status}"
+
+    def extract_assets(self, target_rig: Rig):
+        drive = next((asset for asset in self.__inventory if asset.name == "RemovableDrive"), None)
+        if not drive:
+            print("There are no RemovableDrives, unable to complete extraction.")
+            return
+
+        self.__inventory.remove(drive)
+        unsecured_assets = [asset for asset in target_rig.storage if not asset.encrypted]
+        for asset in unsecured_assets:
+            self.__inventory.append(asset)
+            target_rig.storage.remove(asset)
+
+    def launch_data_spike(self, target_rig: Rig):
+        """Attack another rig using DataSpike from hackers own rig's storage."""
+        if not self.__rig:
+            print("No rig available to launch attack.")
+            return
+        if self.__trace_level >= self.__trace_limit:
+            print(f"{self.__name} is exposed and cannot attack until trace level is reduced!")
+            return
+
+        spike = next((asset for asset in self.__rig.storage if asset.name == "DataSpike"), None)
+        if not spike:
+            print("There are no DataSpikes available in storage to launch attack.")
+            return
+
+        self.__rig.storage.remove(spike)
+        target_rig.take_hit()
+        if target_rig.is_broken():
+            self.extract_assets(target_rig)
+        self.__trace_level += 1
+
+        print(f"{self.__name} extracted {len(unsecured_assets)} unencrypted assets from {target_rig.name}.")
