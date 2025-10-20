@@ -25,6 +25,7 @@ class Hacker:
         self.__trace_limit = 5
         self.__rig = None
         self.__inventory = [CryptoToken()]
+        self.__max_inventory = 5
 
     def acquire_rig(self, rig: Rig | None = None):
         """Acquire a rig using one CryptoToken.
@@ -79,34 +80,52 @@ class Hacker:
             print(f"{self.__name} has no rig to store assets in.")
             return
 
+        max_storage = self.__rig.get_max_storage()
+        current_storage = len(self.__rig.storage)
+
         if all_items:
             movable_assets = [asset for asset in self.__inventory if not asset.encrypted]
             if not movable_assets:
                 print("No movable (unencrypted) assets found in inventory.")
                 return
 
-            self.__inventory = [asset for asset in self.__inventory if asset.encrypted]
-            self.__rig.storage.extend(movable_assets)
-            print(f"All unencrypted assets moved to rig storage.")
+            available_slots = max_storage - current_storage
+            if available_slots <= 0:
+                print(f"{self.__rig.name}'s storage is full ({max_storage} max). Cannot move any assets.")
+                return
+
+            assets_to_move = movable_assets[:available_slots]
+            for asset in assets_to_move:
+                self.__inventory.remove(asset)
+                self.__rig.storage.append(asset)
+
+            print(f"{len(assets_to_move)} unencrypted assets moved to rig storage "
+                  f"({len(self.__rig.storage)}/{max_storage}).")
             return
 
-        # Store a single named asset
-        asset = next((a for a in self.__inventory if a.name == asset_name), None)
+        asset = next((asset for asset in self.__inventory if asset.name == asset_name), None)
         if not asset:
             print(f"{asset_name} not found in {self.__name}'s inventory.")
             return
         if asset.encrypted:
             print(f"{asset_name} is encrypted and cannot be moved.")
             return
+        if current_storage >= max_storage:
+            print(f"{self.__rig.name}'s storage is full ({max_storage} max).")
+            return
 
         self.__inventory.remove(asset)
         self.__rig.storage.append(asset)
-        print(f"{asset_name} moved to rig storage.")
+        print(f"{asset_name} moved to rig storage "
+              f"({len(self.__rig.storage)}/{max_storage}).")
 
     def retrieve_asset(self, asset_name: str = "", all_items: bool = False):
         if not self.__rig:
             print(f"{self.__name} has no rig to retrieve assets from.")
             return
+
+        max_inventory = 5
+        current_inventory = len(self.__inventory)
 
         if all_items:
             movable_assets = [asset for asset in self.__rig.storage if not asset.encrypted]
@@ -114,11 +133,18 @@ class Hacker:
                 print(f"No unencrypted assets in {self.__name}'s rig to retrieve.")
                 return
 
-            for asset in movable_assets:
+            available_slots = max_inventory - current_inventory
+            if available_slots <= 0:
+                print(f"{self.__name}'s inventory is full ({max_inventory} max).")
+                return
+
+            assets_to_move = movable_assets[:available_slots]
+            for asset in assets_to_move:
                 self.__rig.storage.remove(asset)
                 self.__inventory.append(asset)
 
-            print(f"{self.__name} retrieved all unencrypted assets ({len(movable_assets)} total).")
+            print(f"{self.__name} retrieved {len(assets_to_move)} unencrypted assets "
+                  f"({len(self.__inventory)}/{max_inventory} inventory slots used).")
             return
 
         asset = next((asset for asset in self.__rig.storage if asset.name == asset_name), None)
@@ -128,10 +154,14 @@ class Hacker:
         if asset.encrypted:
             print(f"{asset_name} is encrypted and cannot be moved.")
             return
+        if current_inventory >= max_inventory:
+            print(f"{self.__name}'s inventory is full ({max_inventory} max).")
+            return
 
         self.__rig.storage.remove(asset)
         self.__inventory.append(asset)
-        print(f"{asset_name} moved to {self.__name}'s inventory.")
+        print(f"{asset_name} moved to {self.__name}'s inventory "
+              f"({len(self.__inventory)}/{max_inventory}).")
 
     def extract_assets(self, target_rig: Rig):
         drive = next((asset for asset in self.__inventory if asset.name == "RemovableDrive"), None)
@@ -140,12 +170,31 @@ class Hacker:
             return
 
         self.__inventory.remove(drive)
+
         unsecured_assets = [asset for asset in target_rig.storage if not asset.encrypted]
-        for asset in unsecured_assets:
+        if not unsecured_assets:
+            print(f"No unencrypted assets found in {target_rig.name}. Nothing to extract.")
+            return
+
+        max_inventory = 5
+        available_slots = max_inventory - len(self.__inventory)
+        if available_slots <= 0:
+            print(f"{self.__name}'s inventory is full ({max_inventory} max). Cannot extract any assets.")
+            return
+
+        assets_to_extract = unsecured_assets[:available_slots]
+        for asset in assets_to_extract:
             self.__inventory.append(asset)
             target_rig.storage.remove(asset)
 
-        print(f"{self.__name} extracted {len(unsecured_assets)} unencrypted assets from {target_rig.name}.")
+        extracted_count = len(assets_to_extract)
+        total_unencrypted = len(unsecured_assets)
+        if extracted_count < total_unencrypted:
+            print(f"{self.__name} extracted {extracted_count}/{total_unencrypted} assets "
+                  f"before inventory reached its limit ({len(self.__inventory)}/{max_inventory}).")
+        else:
+            print(
+                f"{self.__name} successfully extracted all {extracted_count} unencrypted assets from {target_rig.name}.")
 
     def launch_data_spike(self, target_rig: Rig):
         """Attack another rig using DataSpike from hackers own rig's storage."""
@@ -176,7 +225,7 @@ class Hacker:
 
     def __str__(self):
         rig_status = self.__rig.name if self.__rig else "No Rig"
-        inv_contents = ", ".join(a.name for a in self.__inventory) or "Empty"
+        inv_contents = ", ".join(asset.name for asset in self.__inventory) or "Empty"
         return (f"Hacker: {self.__name}\n"
                 f"Trace Level: {self.__trace_level}/{self.__trace_limit}\n"
                 f"Rig: {rig_status}\n"

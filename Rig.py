@@ -7,6 +7,7 @@ Username: Brocy076
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
 from random import choice
+
 from Asset import *
 
 
@@ -18,6 +19,7 @@ class Rig:
         self.__rig_storage = [DataSpike(), DataSpike(), RemovableDrive()]
         self.__upgrade_level = 0
         self.__owner = owner
+        self.__max_storage = 5
 
     @property
     def storage(self):
@@ -35,16 +37,24 @@ class Rig:
 
         hacker_inventory.remove(patch)
         self.__upgrade_level += 1
+        self.__max_storage = 5 + (self.__upgrade_level * 2)
         print(f"{self.__name} had upgraded their rig \"{self.__name}\" to Level {self.__upgrade_level}!")
 
     def get_level(self):
         return self.__upgrade_level
 
+    def get_max_storage(self):
+        return self.__max_storage
+
     def generate_asset(self):
+        if len(self.__rig_storage) >= self.__max_storage:
+            print(f"{self.__name}'s storage is full! Cannot generate new assets.")
+            return
+
         asset_classes = [CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch]
         new_asset = choice(asset_classes)()
         self.__rig_storage.append(new_asset)
-        print(f"Asset: {new_asset.name}, has been generated.")
+        print(f"Asset: {new_asset.name}, has been generated and added to storage.")
 
     def take_hit(self, attacking_rig_level):
         if self.__broken:
