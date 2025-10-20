@@ -79,6 +79,39 @@ class Hacker:
         rig_status = self.__rig if self.__rig else "No Rig"
         return f"Hacker: {self.__name}\nInventory: {self.__inventory}\nRig: {rig_status}"
 
+    def store_asset(self, asset_name: str):
+        if not self.__rig:
+            print(f"{self.__name} has no rig to store assets in.")
+            return
+        asset = next((asset for asset in self.__inventory if asset.name == asset_name), None)
+        if not asset:
+            print(f"{asset_name} not found in {self.__name}'s inventory.")
+            return
+        if asset.encrypted:
+            print(f"{asset_name} is encrypted and cannot be moved.")
+            return
+
+        self.__inventory.remove(asset)
+        self.__rig.storage.append(asset)
+        print(f"{asset_name} moved to rig storage.")
+
+    def retrieve_asset(self, asset_name: str):
+        """Move an asset from rig storage to inventory if possible."""
+        if not self.__rig:
+            print(f"{self.__name} has no rig to retrieve assets from.")
+            return
+        asset = next((asset for asset in self.__rig.storage if asset.name == asset_name), None)
+        if not asset:
+            print(f"{asset_name} not found in rig storage.")
+            return
+        if asset.encrypted:
+            print(f"{asset_name} is encrypted and cannot be moved.")
+            return
+
+        self.__rig.storage.remove(asset)
+        self.__inventory.append(asset)
+        print(f"{asset_name} moved to {self.__name}'s inventory.")
+
     def extract_assets(self, target_rig: Rig):
         drive = next((asset for asset in self.__inventory if asset.name == "RemovableDrive"), None)
         if not drive:
