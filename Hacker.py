@@ -74,11 +74,24 @@ class Hacker:
         asset.decrypt()
         print(f"{asset.name} decrypted.")
 
-    def store_asset(self, asset_name: str):
+    def store_asset(self, asset_name: str = "", all_items: bool = False):
         if not self.__rig:
             print(f"{self.__name} has no rig to store assets in.")
             return
-        asset = next((asset for asset in self.__inventory if asset.name == asset_name), None)
+
+        if all_items:
+            movable_assets = [asset for asset in self.__inventory if not asset.encrypted]
+            if not movable_assets:
+                print("No movable (unencrypted) assets found in inventory.")
+                return
+
+            self.__inventory = [asset for asset in self.__inventory if asset.encrypted]
+            self.__rig.storage.extend(movable_assets)
+            print(f"All unencrypted assets moved to rig storage.")
+            return
+
+        # Store a single named asset
+        asset = next((a for a in self.__inventory if a.name == asset_name), None)
         if not asset:
             print(f"{asset_name} not found in {self.__name}'s inventory.")
             return
@@ -90,11 +103,24 @@ class Hacker:
         self.__rig.storage.append(asset)
         print(f"{asset_name} moved to rig storage.")
 
-    def retrieve_asset(self, asset_name: str):
-        """Move an asset from rig storage to inventory if possible."""
+    def retrieve_asset(self, asset_name: str = "", all_items: bool = False):
         if not self.__rig:
             print(f"{self.__name} has no rig to retrieve assets from.")
             return
+
+        if all_items:
+            movable_assets = [asset for asset in self.__rig.storage if not asset.encrypted]
+            if not movable_assets:
+                print(f"No unencrypted assets in {self.__name}'s rig to retrieve.")
+                return
+
+            for asset in movable_assets:
+                self.__rig.storage.remove(asset)
+                self.__inventory.append(asset)
+
+            print(f"{self.__name} retrieved all unencrypted assets ({len(movable_assets)} total).")
+            return
+
         asset = next((asset for asset in self.__rig.storage if asset.name == asset_name), None)
         if not asset:
             print(f"{asset_name} not found in rig storage.")
