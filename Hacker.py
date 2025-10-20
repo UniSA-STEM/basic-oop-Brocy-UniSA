@@ -1,6 +1,6 @@
 """
 File: Hacker.py
-Description: <A brief description of this Python module.>
+Description: Defines the Hacker class, which manages a hacker's rig, inventory, and actions like encryption, extraction, and digital combat.
 Author: Corey Brooke
 ID: 110480857
 Username: Brocy076
@@ -12,10 +12,13 @@ from Rig import Rig
 
 class Hacker:
     """
-    The Hacker class starts with 3 parameters:
-    name: Is a string that will represent the instance of the Hacker class.
-    inventory: WIP
-    rig: WIP
+    Attributes:
+        __name (str): Hacker's unique alias.
+        __trace_level (int): Current trace risk; increases after risky actions.
+        __trace_limit (int): Maximum allowed trace before being exposed.
+        __rig (Rig | Default: None): The hacker's assigned rig, if any.
+        __inventory (list[Asset]): Items currently carried by the hacker.
+        __max_inventory (int): Maximum capacity of the hacker's inventory.
     """
 
     def __init__(self, name: str):
@@ -27,29 +30,32 @@ class Hacker:
         self.__inventory = [CryptoToken()]
         self.__max_inventory = 5
 
-    def acquire_rig(self, rig: Rig | None = None):
-        """Acquire a rig using one CryptoToken.
-
-        Searches the inventory for the first CryptoToken. If found, it is removed
-        and a new rig is acquired (or the provided one is activated)."""
-        # Finds the first CryptoToken in the inventory list or returns None
+    def acquire_rig(self, rig: str | None = None):
+        """
+        Acquire a new rig using one CryptoToken, using it if they have it.
+        The hacker than receives a rig.
+        """
+        # Searches for the first case of an asset in the inventory
         token = next((asset for asset in self.__inventory if asset.name == "CryptoToken"), None)
         if not token:
             print(f"{self.__name} doesn’t have enough CryptoTokens to buy a rig.")
             return
 
-        # Removes the token from the list and creates the Rig
         self.__inventory.remove(token)
-        self.__rig = rig if rig else Rig(owner=self.__name)
+
+        # If a rig name was given then they are given it will pass that through, with the hackers name.
+        self.__rig = Rig(rig, owner=self.__name)
         print(f"{self.__name}, your rig is activated and ready for use.")
 
     def upgrade_rig(self):
+        """Upgrade the Hacker's Rig using a HardwarePatch from inventory"""
         if not self.__rig:
             print(f"{self.__name} has no rig to upgrade.")
             return
         self.__rig.upgrade(self.__inventory)
 
     def encrypt_asset(self, asset: Asset):
+        """Encrypt a given asset using a SecurityChip by calling the encryption method from Asset class."""
         chip = next((asset for asset in self.__inventory if asset.name == "SecurityChip"), None)
         if not chip:
             print("There are no SecurityChips in inventory for encryption.")
@@ -63,6 +69,7 @@ class Hacker:
         print(f"{asset.name} encrypted.")
 
     def decrypt_asset(self, asset: Asset):
+        """Decrypt a given asset using a SecurityChip by calling the decryption method from Asset class."""
         chip = next((asset for asset in self.__inventory if asset.name == "SecurityChip"), None)
         if not chip:
             print("There are no SecurityChips in inventory for decryption.")
@@ -76,6 +83,8 @@ class Hacker:
         print(f"{asset.name} decrypted.")
 
     def store_asset(self, asset_name: str = "", all_items: bool = False):
+        """Move one or all unencrypted assets from the hacker's inventory
+        to their rig's storage, without going over the Rig's storage limit."""
         if not self.__rig:
             print(f"{self.__name} has no rig to store assets in.")
             return
@@ -84,6 +93,7 @@ class Hacker:
         current_storage = len(self.__rig.storage)
 
         if all_items:
+            # Checks if items are encrypted and puts the ones that are into a new list
             movable_assets = [asset for asset in self.__inventory if not asset.encrypted]
             if not movable_assets:
                 print("No movable (unencrypted) assets found in inventory.")
@@ -94,6 +104,7 @@ class Hacker:
                 print(f"{self.__rig.name}'s storage is full ({max_storage} max). Cannot move any assets.")
                 return
 
+            # Move as many assets as will fit in Rig storage.
             assets_to_move = movable_assets[:available_slots]
             for asset in assets_to_move:
                 self.__inventory.remove(asset)
@@ -103,6 +114,7 @@ class Hacker:
                   f"({len(self.__rig.storage)}/{max_storage}).")
             return
 
+        # If all_items is False then it will only move one item.
         asset = next((asset for asset in self.__inventory if asset.name == asset_name), None)
         if not asset:
             print(f"{asset_name} not found in {self.__name}'s inventory.")
@@ -120,6 +132,8 @@ class Hacker:
               f"({len(self.__rig.storage)}/{max_storage}).")
 
     def retrieve_asset(self, asset_name: str = "", all_items: bool = False):
+        """Retrieve one or all unencrypted assets from the rig's storage
+        back to the hacker's inventory, without going over the Hacker's inventory limit."""
         if not self.__rig:
             print(f"{self.__name} has no rig to retrieve assets from.")
             return
@@ -138,6 +152,7 @@ class Hacker:
                 print(f"{self.__name}'s inventory is full ({max_inventory} max).")
                 return
 
+            # Move as many assets as fit in inventory
             assets_to_move = movable_assets[:available_slots]
             for asset in assets_to_move:
                 self.__rig.storage.remove(asset)
@@ -147,6 +162,7 @@ class Hacker:
                   f"({len(self.__inventory)}/{max_inventory} inventory slots used).")
             return
 
+        # If all_items is False then it will only move one item.
         asset = next((asset for asset in self.__rig.storage if asset.name == asset_name), None)
         if not asset:
             print(f"{asset_name} not found in rig storage.")
@@ -164,6 +180,8 @@ class Hacker:
               f"({len(self.__inventory)}/{max_inventory}).")
 
     def extract_assets(self, target_rig: Rig):
+        """Extract unencrypted assets from a broken rig using a RemovableDrive (Consuming it), and
+        transfer unencrypted assets to the hacker's inventory, without going over the limit."""
         drive = next((asset for asset in self.__inventory if asset.name == "RemovableDrive"), None)
         if not drive:
             print("There are no RemovableDrives, unable to complete extraction.")
@@ -182,6 +200,7 @@ class Hacker:
             print(f"{self.__name}'s inventory is full ({max_inventory} max). Cannot extract any assets.")
             return
 
+        # Move as many assets as fit in inventory
         assets_to_extract = unsecured_assets[:available_slots]
         for asset in assets_to_extract:
             self.__inventory.append(asset)
@@ -197,7 +216,9 @@ class Hacker:
                 f"{self.__name} successfully extracted all {extracted_count} unencrypted assets from {target_rig.name}.")
 
     def launch_data_spike(self, target_rig: Rig):
-        """Attack another rig using DataSpike from hackers own rig's storage."""
+        """Attack another rig using a DataSpike from the hacker's rig storage (Consuming it), with each
+        successful hit increases the target rig's damage and raises the hacker's trace level.
+        If the target rig breaks, unsecured assets are extracted automatically."""
         if not self.__rig:
             print("No rig available to launch attack.")
             return
@@ -214,9 +235,10 @@ class Hacker:
         target_rig.take_hit(target_rig.get_level())
         if target_rig.is_broken():
             self.extract_assets(target_rig)
-        self.__trace_level += 1
+        self.__trace_level += 1  # Each attack increases trace risk.
 
     def scan_inventory(self, asset_name: str):
+        """Scan for and remove a specific asset from the hacker's inventory."""
         asset = next((asset for asset in self.__inventory if asset.name == asset_name), None)
         if asset:
             self.__inventory.remove(asset)
@@ -224,6 +246,7 @@ class Hacker:
         return None
 
     def __str__(self):
+        """Returns summary of the hacker's current state."""
         rig_status = self.__rig.name if self.__rig else "No Rig"
         inv_contents = ", ".join(asset.name for asset in self.__inventory) or "Empty"
         return (f"Hacker: {self.__name}\n"

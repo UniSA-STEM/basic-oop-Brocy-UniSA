@@ -1,6 +1,6 @@
 """
 File: Asset.py
-Description: This file contains code for basic asset creation, used by the Hacker and Rig files.
+Description: Defines a base Asset class and subclasses representing different types of digital assets with encryption functionality.
 Author: Corey Brooke
 ID: 110480857
 Username: Brocy076
