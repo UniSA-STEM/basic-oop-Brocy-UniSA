@@ -162,7 +162,7 @@ class Hacker:
             return
 
         self.__rig.storage.remove(spike)
-        target_rig.take_hit()
+        target_rig.take_hit(target_rig.get_level())
         if target_rig.is_broken():
             self.extract_assets(target_rig)
         self.__trace_level += 1

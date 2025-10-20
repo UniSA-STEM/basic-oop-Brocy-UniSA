@@ -37,19 +37,22 @@ class Rig:
         self.__upgrade_level += 1
         print(f"{self.__name} had upgraded their rig \"{self.__name}\" to Level {self.__upgrade_level}!")
 
+    def get_level(self):
+        return self.__upgrade_level
+
     def generate_asset(self):
         asset_classes = [CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch]
         new_asset = choice(asset_classes)()
         self.__rig_storage.append(new_asset)
         print(f"Asset: {new_asset.name}, has been generated.")
 
-    def take_hit(self):
+    def take_hit(self, attacking_rig_level):
         if self.__broken:
             print(f"{self.__name} is already broken.")
             return
 
         threshold = 2 + self.__upgrade_level
-        self.__damage += 1
+        self.__damage += (1 + attacking_rig_level)
 
         if self.__damage >= threshold:
             self.__broken = True
