@@ -74,11 +74,6 @@ class Hacker:
         asset.decrypt()
         print(f"{asset.name} decrypted.")
 
-    def __str__(self):
-        """Return a string representation of the Hacker."""
-        rig_status = self.__rig if self.__rig else "No Rig"
-        return f"Hacker: {self.__name}\nInventory: {self.__inventory}\nRig: {rig_status}"
-
     def store_asset(self, asset_name: str):
         if not self.__rig:
             print(f"{self.__name} has no rig to store assets in.")
@@ -124,6 +119,8 @@ class Hacker:
             self.__inventory.append(asset)
             target_rig.storage.remove(asset)
 
+        print(f"{self.__name} extracted {len(unsecured_assets)} unencrypted assets from {target_rig.name}.")
+
     def launch_data_spike(self, target_rig: Rig):
         """Attack another rig using DataSpike from hackers own rig's storage."""
         if not self.__rig:
@@ -144,4 +141,17 @@ class Hacker:
             self.extract_assets(target_rig)
         self.__trace_level += 1
 
-        print(f"{self.__name} extracted {len(unsecured_assets)} unencrypted assets from {target_rig.name}.")
+    def scan_inventory(self, asset_name: str):
+        asset = next((asset for asset in self.__inventory if asset.name == asset_name), None)
+        if asset:
+            self.__inventory.remove(asset)
+            return asset
+        return None
+
+    def __str__(self):
+        rig_status = self.__rig.name if self.__rig else "No Rig"
+        inv_contents = ", ".join(a.name for a in self.__inventory) or "Empty"
+        return (f"Hacker: {self.__name}\n"
+                f"Trace Level: {self.__trace_level}/{self.__trace_limit}\n"
+                f"Rig: {rig_status}\n"
+                f"Inventory: {inv_contents}")
