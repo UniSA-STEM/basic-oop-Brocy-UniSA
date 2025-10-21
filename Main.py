@@ -11,7 +11,6 @@ This is my own work as defined by the University's Academic Misconduct Policy.
 """
 
 from Asset import *
-from Rig import Rig
 from Hacker import Hacker
 
 
@@ -27,7 +26,7 @@ def test_buy_rig():
 
     sun = Hacker("Sun_Rider")
     print(sun)
-    sun.acquire_rig("StarShip") # to see if the custom names work
+    sun.acquire_rig("StarShip")  # to see if the custom names work
     print(sun)
     return sun
 
@@ -58,10 +57,28 @@ def test_upgrade_and_generation(hacker):
     print(hacker._Hacker__rig)
 
 
+def test_encryption_decryption(hacker):
+    """Tests if hacker class can (en/de)crypt an item"""
+    print("\n--------- TEST 3: Encryption and Decryption ---------\n")
+
+    hacker._Hacker__inventory.append(SecurityChip())
+
+    asset_to_encrypt = hacker._Hacker__inventory[0]
+    hacker.encrypt_asset(asset_to_encrypt)
+    print(asset_to_encrypt)
+
+    hacker.encrypt_asset(asset_to_encrypt)
+
+    hacker._Hacker__inventory.append(SecurityChip())
+    hacker.decrypt_asset(asset_to_encrypt)
+    print(asset_to_encrypt)
+
+
 def main():
     print("=== CYBERPUNK HACKER SIMULATION ===")
     sun = test_buy_rig()
     test_upgrade_and_generation(sun)
+    test_encryption_decryption(sun)
     print("\n=== Simulation Complete ===")
 
 

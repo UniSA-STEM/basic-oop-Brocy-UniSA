@@ -55,8 +55,8 @@ class Asset:
         """Returns a string showing the asset's name, description,
         and an [Encrypted] tag if the asset is protected."""
         if self.__encrypted:
-            return f"{self.__name}: {self.__description} [Encrypted]"
-        return f"{self.__name}: {self.__description}"
+            return f"{self.__name}: {self.__description} [Encrypted]\n"
+        return f"{self.__name}: {self.__description}\n"
 
 
 # ----<Subclasses representing the types of assets that can be made>----
