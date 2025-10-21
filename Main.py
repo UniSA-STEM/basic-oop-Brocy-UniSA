@@ -120,6 +120,22 @@ def test_attack_and_extraction():
     print(attacker)
 
 
+def test_edge_cases():
+    print("------------ TEST 6: Some Extra Edge Cases ------------\n")
+    no_rig_hacker = Hacker("Patchless")
+    patch = HardwarePatch()
+    no_rig_hacker.get_inventory().append(patch)
+    no_rig_hacker.upgrade_rig()
+
+    # trying to encrypt without a chip
+    token = CryptoToken()
+    no_rig_hacker.get_inventory().append(token)
+    no_rig_hacker.encrypt_asset(token)
+
+    # trying to store assets without a rig
+    no_rig_hacker.store_asset(all_items=True)
+
+
 def main():
     print("=== CYBERPUNK HACKER SIMULATION ===")
     sun = test_buy_rig()
@@ -127,6 +143,7 @@ def main():
     test_encryption_decryption(sun)
     test_storage_and_retrieval(sun)
     test_attack_and_extraction()
+    test_edge_cases()
     print("\n=== Simulation Complete ===")
 
 
