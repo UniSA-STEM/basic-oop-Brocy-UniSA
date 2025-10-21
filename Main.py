@@ -59,7 +59,7 @@ def test_upgrade_and_generation(hacker):
 
 def test_encryption_decryption(hacker):
     """Tests if hacker class can (en/de)crypt an item"""
-    print("\n--------- TEST 3: Encryption and Decryption ---------\n")
+    print("--------- TEST 3: Encryption and Decryption ---------\n")
 
     hacker._Hacker__inventory.append(SecurityChip())
 
@@ -74,11 +74,32 @@ def test_encryption_decryption(hacker):
     print(asset_to_encrypt)
 
 
+def test_storage_and_retrieval(hacker):
+    """Tests if hacker class can store and retrieve an item"""
+    print("--------- TEST 4: Asset Storage and Retrieval ---------\n")
+    # Upgrades here to give more space for testing
+    for _ in range(5):
+        hacker._Hacker__inventory.append(HardwarePatch())
+        hacker.upgrade_rig()
+
+
+    for _ in range(6):
+        # tests retrieving one asset from rig
+        hacker.retrieve_asset(hacker._Hacker__rig.storage[0].name)
+    print(hacker)
+    print(hacker._Hacker__rig)
+
+    # tests storing all assets to rig
+    hacker.store_asset(all_items=True)
+    print(hacker._Hacker__rig)
+
+
 def main():
     print("=== CYBERPUNK HACKER SIMULATION ===")
     sun = test_buy_rig()
     test_upgrade_and_generation(sun)
     test_encryption_decryption(sun)
+    test_storage_and_retrieval(sun)
     print("\n=== Simulation Complete ===")
 
 
