@@ -327,11 +327,24 @@ class Hacker:
         return None
 
     def __str__(self):
-        """Returns summary of the hacker's current state."""
+        """Return a formatted summary of the hacker's current state."""
         rig_status = self.__rig.name if self.__rig else "No Rig"
         inv_contents = ", ".join(
             asset.name for asset in self.__inventory) or "Empty"
-        return (f"Hacker: {self.__name}\n"
-                f"Trace Level: {self.__trace_level}/{self.__trace_limit}\n"
-                f"Rig: {rig_status}\n"
-                f"Inventory: {inv_contents}")
+
+        lines = [
+            f"Hacker: {self.__name}",
+            f"Trace Level: {self.__trace_level}/{self.__trace_limit}",
+            f"Rig: {rig_status}",
+            f"Inventory: {inv_contents}",
+        ]
+
+        max_length = max(len(line) for line in lines)
+        horizontal_border = "+" + "-" * (max_length + 2) + "+"
+
+        boxed_lines = [horizontal_border]
+        for line in lines:
+            boxed_lines.append(f"| {line.ljust(max_length)} |")
+        boxed_lines.append(horizontal_border)
+
+        return "\n".join(boxed_lines)
