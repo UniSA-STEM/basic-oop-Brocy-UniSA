@@ -329,6 +329,18 @@ class Hacker:
             return asset
         return None
 
+    def hide(self):
+        """Lowers the hacker's trace level."""
+        self.__trace_level = 0
+
+    def get_inventory(self):
+        """Getter for the hacker's inventory."""
+        return self.__inventory
+
+    def get_rig(self):
+        """Getter for the hacker's rig."""
+        return self.__rig
+
     def __str__(self):
         """Return a formatted summary of the hacker's current state."""
         rig_status = self.__rig.name if self.__rig else "No Rig"
