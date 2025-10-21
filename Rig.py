@@ -70,7 +70,7 @@ class Rig:
         if not patch:
             print(
                 "There are no HardwarePatches available to upgrade "
-                "Rig.")
+                "Rig.\n")
             return
 
         hacker_inventory.remove(patch)
@@ -79,8 +79,8 @@ class Rig:
         self.__max_storage = 5 + (
                 self.__upgrade_level * 2)
         print(
-            f"{self.__name} had upgraded their Rig \"{self.__name}\" to"
-            f" Level {self.__upgrade_level}!")
+            f"{self.__name} had upgraded their Rig <{self.__name}> to"
+            f" Level {self.__upgrade_level}!\n")
 
     def generate_asset(self):
         """
@@ -90,7 +90,7 @@ class Rig:
         if len(self.__rig_storage) >= self.__max_storage:
             print(
                 f"{self.__name}'s storage is full! Cannot generate new"
-                f" assets.")
+                f" assets.\n")
             return
 
         # Sets the possible options (all the subclasses from Asset) and
@@ -101,7 +101,7 @@ class Rig:
         self.__rig_storage.append(new_asset)
         print(
             f"Asset: {new_asset.name}, has been generated and added to"
-            f" storage.")
+            f" storage.\n")
 
     def take_hit(self, attacking_rig_level):
         """
@@ -110,7 +110,7 @@ class Rig:
         it becomes broken.
         """
         if self.__broken:
-            print(f"{self.__name} is already broken.")
+            print(f"{self.__name} is already broken.\n")
             return
 
         threshold = 2 + self.__upgrade_level  # Basic Rig brakes at 2
@@ -119,12 +119,12 @@ class Rig:
         if self.__damage >= threshold:
             self.__broken = True
             print(
-                f"{self.__owner}'s Rig \"{self.__name}\" has broken "
-                f"under attack!")
+                f"{self.__owner}'s Rig <{self.__name}> has broken "
+                f"under attack!\n")
         else:
             print(
                 f"{self.__name} took damage ({self.__damage}/"
-                f"{threshold}).")
+                f"{threshold}).\n")
 
     def repair(self, hacker_inventory: list):
         """
@@ -137,15 +137,15 @@ class Rig:
         if not token:
             print(
                 f"{self.__owner} doesn’t have enough CryptoTokens to "
-                f"repair {self.__name}.")
+                f"repair {self.__name}.\n")
             return
         if self.__damage == 0:
-            print(f"{self.__name} doesn't need repairs.")
+            print(f"{self.__name} doesn't need repairs.\n")
             return
         hacker_inventory.remove(token)
         self.__damage = 0
         self.__broken = False
-        print(f"{self.__owner} has repaired \"{self.__name}\".")
+        print(f"{self.__owner} has repaired <{self.__name}>.\n")
 
     def condition(self):
         """Return string showing the rig's condition and level"""
@@ -166,5 +166,40 @@ class Rig:
         """
         stored_assets = ", ".join(
             asset.name for asset in self.__rig_storage) or "Empty"
-        return (f"Rig: {self.__name} | {self.condition()} | Assets: "
-                f"{stored_assets}")
+
+        # Build main info lines
+        lines = [
+            f"Rig: {self.__name}",
+            f"Condition: {self.condition()}",
+            "Stored Assets:"
+        ]
+
+        # Determine maximum width (based on main lines and assets)
+        max_length = max(len(line) for line in lines + [stored_assets])
+        max_length = min(max_length, 70)  # optional: limit box width
+
+        # Wrap the asset list manually
+        wrapped_assets = []
+        current_line = ""
+        for word in stored_assets.split(", "):
+            if len(current_line) + len(word) + 2 > max_length - 2:
+                wrapped_assets.append(current_line.rstrip(", "))
+                current_line = word + ", "
+            else:
+                current_line += word + ", "
+        if current_line:
+            wrapped_assets.append(current_line.rstrip(", "))
+
+        # Create box borders
+        horizontal_border = "+" + "-" * (max_length + 2) + "+"
+
+        # Build the full box
+        boxed_lines = [horizontal_border]
+        for line in lines:
+            boxed_lines.append(f"| {line.ljust(max_length)} |")
+        for wrapped_line in wrapped_assets:
+            boxed_lines.append(f"|   {wrapped_line.ljust(max_length - 2)} |")
+        boxed_lines.append(horizontal_border)
+
+        # Return formatted box with trailing newline
+        return "\n".join(boxed_lines) + "\n"

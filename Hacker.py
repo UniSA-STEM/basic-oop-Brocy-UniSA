@@ -58,7 +58,8 @@ class Hacker:
         # through, with the hackers name.
         self.__rig = Rig(rig, owner=self.__name)
         print(
-            f"{self.__name}, your rig is activated and ready for use.")
+            f"{self.__name}, your rig <{self.__rig.name}> is activated"
+            f" and ready for use.\n")
 
     def upgrade_rig(self):
         """
@@ -122,8 +123,8 @@ class Hacker:
         current_storage = len(self.__rig.storage)
 
         if all_items:
-            # Checks if items are encrypted and puts the ones that are into
-            # a new list
+            # Checks if items are encrypted and puts the ones that are
+            # into a new list
             movable_assets = [asset for asset in self.__inventory if
                               not asset.encrypted]
             if not movable_assets:
@@ -347,4 +348,4 @@ class Hacker:
             boxed_lines.append(f"| {line.ljust(max_length)} |")
         boxed_lines.append(horizontal_border)
 
-        return "\n".join(boxed_lines)
+        return "\n".join(boxed_lines) + "\n"
